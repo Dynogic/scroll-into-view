@@ -9,12 +9,16 @@ function raf(task){
     setTimeout(task, 16);
 }
 
-function setElementScroll(element, x, y){
+function setElementScroll(element, x, y, lockX, lockY){
     if(element.self === element){
         element.scrollTo(x, y);
     }else{
-        element.scrollLeft = x;
-        element.scrollTop = y;
+        if (!lockX) {
+            element.scrollLeft = x;
+        }
+        if (!lockY) {
+            element.scrollTop = y;
+        }
     }
 }
 
@@ -83,7 +87,7 @@ function animate(parent){
         timeValue = Math.min(1 / scrollSettings.time * time, 1);
 
     if(scrollSettings.endIterations >= maxSynchronousAlignments){
-        setElementScroll(parent, location.x, location.y);
+        setElementScroll(parent, location.x, location.y, scrollSettings.lockX, scrollSettings.lockY);
         parent._scrollSettings = null;
         return scrollSettings.end(COMPLETE);
     }
@@ -92,7 +96,9 @@ function animate(parent){
 
     setElementScroll(parent,
         location.x - location.differenceX * easeValue,
-        location.y - location.differenceY * easeValue
+        location.y - location.differenceY * easeValue,
+        scrollSettings.lockX,
+        scrollSettings.lockY,
     );
 
     if(time >= scrollSettings.time){
@@ -150,7 +156,9 @@ function transitionScrollTo(target, parent, settings, callback){
         align: settings.align,
         isWindow: settings.isWindow || defaultIsWindow,
         maxSynchronousAlignments: maxSynchronousAlignments,
-        end: end
+        end: end,
+        lockX: settings.lockX,
+        lockY: settings.lockY,
     };
 
     if(!('cancellable' in settings) || settings.cancellable){
@@ -215,6 +223,8 @@ module.exports = function(target, settings, callback){
 
     settings.time = isNaN(settings.time) ? 1000 : settings.time;
     settings.ease = settings.ease || function(v){return 1 - Math.pow(1 - v, v / 2);};
+    settings.lockX = settings.lockX || false;
+    settings.lockY = settings.lockY || false;
 
     var parent = findParentElement(target),
         parents = 1;
