@@ -453,6 +453,7 @@ module.exports = function(target, settings, callback){
     settings.ease = settings.ease || function(v){return 1 - Math.pow(1 - v, v / 2);};
     settings.lockX = settings.lockX || false;
     settings.lockY = settings.lockY || false;
+    settings.scrollAllParents = settings.scrollAllParents || true;
 
     var parent = findParentElement(target),
         parents = 1;
@@ -487,7 +488,7 @@ module.exports = function(target, settings, callback){
 
         parent = findParentElement(parent);
 
-        if(!parent){
+        if(!settings.scrollAllParents || !parent){
             done(COMPLETE)
             break;
         }
