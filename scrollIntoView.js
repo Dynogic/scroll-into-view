@@ -225,7 +225,7 @@ module.exports = function(target, settings, callback){
     settings.ease = settings.ease || function(v){return 1 - Math.pow(1 - v, v / 2);};
     settings.lockX = settings.lockX || false;
     settings.lockY = settings.lockY || false;
-    settings.scrollAllParents = settings.scrollAllParents || true;
+    settings.scrollAllParents = typeof settings.scrollAllParents === 'boolean' ?  settings.scrollAllParents : true;
 
     var parent = findParentElement(target),
         parents = 1;
